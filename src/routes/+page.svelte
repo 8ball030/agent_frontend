@@ -284,10 +284,6 @@ function setAdvanced() {
 		}
 	}
 
-    .th {
-        justify-content: center;
-    }
-
     .btn:active {
         animation: glow 10s ease-in-out;
         animation-fill-mode: forwards;
