@@ -36,3 +36,19 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+
+## Running a dev agent
+### Running in docker
+
+```bash
+docker run -p 8001:8001 -p 8080:8080 -it valory/open-autonomy-user:0.10.7
+export AGENT_HASH=bafybeiepvtx6bjafcqf73ykwwjyuddvb3cdjach6bkeplg7mrtdzf2q7fy
+aea fetch $AGENT_HASH --alias agent
+cd agent
+export LOG_FILE="log.txt"
+export LOG_DIR="."
+aea -s generate-key ethereum && aea -s add-key ethereum && \
+aea -s install && \
+aea -s run
+```
