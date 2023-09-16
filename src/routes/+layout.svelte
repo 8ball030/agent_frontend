@@ -2,6 +2,8 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 
+	import { initializeStores } from '@skeletonlabs/skeleton';
+	initializeStores();
 	// Highlight JS
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github-dark.css';
@@ -12,9 +14,12 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
 </script>
 
 <!-- App Shell -->
+<Toast />
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
