@@ -14,7 +14,7 @@ const io = socketIo(server, {
 	}
 });
 
-const filePath = '~/Desktop/Fun/mad_market_maker/service/abci_build/persistent_data/logs/aea_0.txt';
+const filePath = '/home/tom/Desktop/Fun/mad_market_maker/agent/log.txt';
 
 // Serve the HTML file for testing the WebSocket connection
 const TailFile = require('@logdna/tail-file');
@@ -55,8 +55,8 @@ tail.on('data', (data) => {
 
 // we start the server
 
-server.listen(8080, () => {
-	console.log(`Listening on port 8080`);
+server.listen(8081, () => {
+	console.log(`Listening on port 8081`);
 	tail.start().catch((err) => {
 		console.error('Cannot start tailing. Does the file exist?', err);
 	});

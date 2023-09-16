@@ -22,6 +22,12 @@ const config = {
 			// precompress: false,
 			// strict: false
 		}),
+		csrf: {
+			checkOrigin: false
+			// exclude: [ "/webhooks/*" ],
+			// AND/OR
+			// exclude [ "/webhooks/1", "/webhooks/2" ]
+		},
 		prerender: {
 			handleHttpError: ({ path, referrer, message }) => {
 				// ignore deliberate link to shiny 404 page

@@ -4,7 +4,16 @@
 	import { onMount } from 'svelte';
 	import io from 'socket.io-client';
 	import { _LogLine } from './+page';
-	const socket = io('http://localhost:8080');
+	// we need to set socket header to ignore cors
+	const socket = io('http://127.0.0.0:8080', {});
+
+	import { getToastStore } from '@skeletonlabs/skeleton';
+
+	const toastStore = getToastStore();
+
+	// we want to call connect on the socket
+	socket.connect();
+
 	const defaultHeaders = ['Date', 'Log Level', 'Agent Name', 'Module Name', 'Message'];
 
 	const DEFAULT_AGENT_STATE = 'Unknown';
@@ -13,15 +22,17 @@
 	$: agentState = DEFAULT_AGENT_STATE;
 	$: latestDate = getLatestDate();
 
-    $: renderLoopRunning = false;
+	$: connection_status = socket.connected;
+
+	$: renderLoopRunning = false;
 
 	$: followLogsChecked = false;
 	$: displayDatesChecked = true;
-	$: displayLogLevelChecked = true;
-	$: displayAgentNameChecked = true;
-	$: displayModuleNameChecked = true;
+	$: displayLogLevelChecked = false;
+	$: displayAgentNameChecked = false;
+	$: displayModuleNameChecked = false;
 	$: streamLogsChecked = true;
-	$: advancedChecked = true;
+	$: advancedChecked = false;
 
 	$: headers = defaultHeaders;
 	$: sourceData = [];
@@ -33,16 +44,36 @@
 		// Optional: The data returned when interactive is enabled and a row is clicked.
 	};
 
+	$: test_data =
+		"2023-09-16 02:09:24,166 [INFO] aea.agent.packages.eightballer.skills.logging: [agent] Handling connect message in skill: Message(sender=eightballer/websocket_server:0.1.0,to=eightballer/logging:0.1.0,dialogue_reference=('f5ef488b0eb8f1b244183c73d7f91ef0d1c5b6e49ba0d0674a5aad76de997c0a', ''),message_id=1,performative=connect,target=0,url=/socket.io/)";
+
 	function clearLogs() {
 		logs = [];
 		mapLogsToRows();
 	}
 
 	socket.on('connect', () => {
+		const setting = {
+			message: 'Successfully connected to the agent!',
+			timeout: 3000,
+			background: 'variant-ghost-success'
+		};
+		toastStore.trigger(setting);
+		connection_status = true;
 		socket.emit('agent', 'agent');
 	});
 
-	socket.on('line', (data) => {
+	socket.on('disconnect', () => {
+		connection_status = false;
+		const setting = {
+			message: 'Disconnected from the agent!',
+			timeout: 3000,
+			background: 'variant-ghost-error'
+		};
+		toastStore.trigger(setting);
+	});
+
+	socket.on('data', (data) => {
 		if (!streamLogsChecked) {
 			return;
 		}
@@ -50,6 +81,7 @@
 	});
 
 	async function handleLog(data) {
+		console.log(data);
 		try {
 			const result = await parseLogLine(data);
 			if (result.parseAll() === false) {
@@ -86,7 +118,7 @@
 		}
 		try {
 			const logCard = document.getElementById('log-card');
-			logCard.scrollTop = logCard.scrollTopMax;
+			logCard.scrollTop = logCard.scrollHeight;
 		} catch (e) {
 			return;
 		}
@@ -163,11 +195,10 @@
 	}
 
 	async function renderLoop() {
-
-        if (renderLoopRunning) {
-            return
-        }
-        renderLoopRunning = !renderLoopRunning;
+		if (renderLoopRunning) {
+			return;
+		}
+		renderLoopRunning = !renderLoopRunning;
 		while (renderLoopRunning) {
 			renderAll();
 			await new Promise((r) => setTimeout(r, 20));
@@ -197,7 +228,6 @@
 	<div class="space-y-10 text-center flex flex-col items-center card p-2">
 		<div class="card m-2 p-2">
 			<h1 class="h1 p-2">Agent</h1>
-
 			<div
 				class="flex flex-row justify-center items-center space-x-2 card p-5 bg variant-ghost-surface"
 			>
@@ -266,10 +296,10 @@
 					<button type="button" class="btn btn-sm variant-ghost-secondary m-2 p-2"
 						>Total Logs: {logs.length}</button
 					>
-					<button type="button" class="btn btn-sm variant-ghost-secondary m-2 p-2"
-						>Latest Date: {latestDate}</button
-					>
 				{/if}
+				<button type="button" class="btn btn-sm variant-ghost-secondary m-2 p-2"
+					>Latest Date: {latestDate}</button
+				>
 			</div>
 		</div>
 
@@ -278,6 +308,43 @@
 				<Table regionHeadCell="text-center card bg variant-ghost-surface" source={tableData} />
 			</div>
 		</div>
+		{#if advancedChecked == true}
+			<div class="card m-2 p-2">
+				<h1 class="h1 p-2">Ping Agent</h1>
+				<div
+					class="flex flex-row justify-center items-center space-x-2 card p-5 bg variant-ghost-surface"
+				>
+					{#if connection_status}
+						<div
+							class="flex flex-row justify-center items-center space-x-2 card p-5 bg variant-ghost-success"
+						>
+							<h4 class="h5">Connected</h4>
+						</div>
+					{:else}
+						<div
+							class="flex flex-row justify-center items-center space-x-2 card p-5 bg variant-ghost-error"
+						>
+							<h4 class="h5">Disconnected</h4>
+						</div>
+					{/if}
+					<div
+						class="flex flex-row justify-center items-center space-x-2 card p-5 bg variant-ghost-surface"
+					>
+						<input
+							type="text"
+							class="input input-primary input-bordered"
+							placeholder="Enter Message"
+							bind:value={test_data}
+						/>
+						<button
+							type="button"
+							class="btn btn-sm variant-filled-warning"
+							on:click={() => socket.emit('message', test_data)}>Send Test</button
+						>
+					</div>
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>
 
