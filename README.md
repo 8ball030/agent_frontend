@@ -43,7 +43,7 @@ You can preview the production build with `npm run preview`.
 
 ```bash
 docker run -p 8001:8001 -p 8080:8080 -it valory/open-autonomy-user:0.10.7
-export AGENT_HASH=bafybeiepvtx6bjafcqf73ykwwjyuddvb3cdjach6bkeplg7mrtdzf2q7fy
+export AGENT_HASH=bafybeicrsaulxhbw7h3o4vh5yyy5pr6s3vxhrxd76enoxs3rngfwkk2uha
 aea fetch $AGENT_HASH --alias agent
 cd agent
 export LOG_FILE="log.txt"
