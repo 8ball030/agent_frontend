@@ -26,7 +26,7 @@
 
 	$: renderLoopRunning = false;
 
-	$: followLogsChecked = false;
+	$: followLogsChecked = true;
 	$: displayDatesChecked = true;
 	$: displayLogLevelChecked = false;
 	$: displayAgentNameChecked = false;
@@ -44,8 +44,9 @@
 		// Optional: The data returned when interactive is enabled and a row is clicked.
 	};
 
-	$: test_data =
+	$: log_test_data =
 		"2023-09-16 02:09:24,166 [INFO] aea.agent.packages.eightballer.skills.logging: [agent] Handling connect message in skill: Message(sender=eightballer/websocket_server:0.1.0,to=eightballer/logging:0.1.0,dialogue_reference=('f5ef488b0eb8f1b244183c73d7f91ef0d1c5b6e49ba0d0674a5aad76de997c0a', ''),message_id=1,performative=connect,target=0,url=/socket.io/)";
+	$: test_data = 'Ping!';
 
 	function clearLogs() {
 		logs = [];
@@ -81,7 +82,6 @@
 	});
 
 	async function handleLog(data) {
-		console.log(data);
 		try {
 			const result = await parseLogLine(data);
 			if (result.parseAll() === false) {
@@ -108,6 +108,7 @@
 		followLogsChecked = !followLogsChecked;
 		if (followLogsChecked) {
 			alwaysScrollToBottom();
+			console.log('Following logs');
 		}
 		renderAll();
 	}
@@ -215,10 +216,10 @@
 			displayLogLevelChecked = false;
 			displayModuleNameChecked = false;
 			displayAgentNameChecked = false;
-			if (!followLogsChecked) {
-				followLogs();
-			}
-			followLogsChecked = true;
+		} else {
+		}
+		if (followLogsChecked) {
+			alwaysScrollToBottom();
 		}
 		renderAll();
 	}

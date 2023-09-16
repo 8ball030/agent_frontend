@@ -12,7 +12,8 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"tauri": "tauri"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -22,6 +23,7 @@
 		"@sveltejs/kit": "^1.20.4",
 		"@tailwindcss/forms": "0.5.6",
 		"@tailwindcss/typography": "0.5.10",
+		"@tauri-apps/cli": "^1.4.0",
 		"@types/node": "20.6.0",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
