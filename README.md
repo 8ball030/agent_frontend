@@ -52,3 +52,36 @@ aea -s generate-key ethereum && aea -s add-key ethereum && \
 aea -s install && \
 aea -s run
 ```
+
+
+building.
+
+It is bery difficult to do so in linux.
+
+Advised to do so within a docker container
+
+```
+apt-get install libsoup-3.0 
+	libjavascriptcoregtk-4.1-dev
+	webkit2gtk-4.1
+	android-sdk
+```
+export ANDROID_HOME=/usr/lib/android-sdk
+export NDK_HOME=/workdir/deps/android-ndk-r26
+
+cd ANDROID_HOME
+wget --quiet --output-document=tools.zip https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+unzip -qq tools.zip
+echo y | tools/bin/sdkmanager "platforms;android-25"
+echo y | tools/bin/sdkmanager "platform-tools"
+echo y | tools/bin/sdkmanager "build-tools;25.0.2"
+echo y | tools/bin/sdkmanager "extras;android;m2repository"
+echo y | tools/bin/sdkmanager "extras;google;m2repository"
+
+```
+
+need a load of android stuff
+
+https://jdk.java.net/archive/
+
+java 11 seems to do the trick.

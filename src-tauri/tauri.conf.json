@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/schema.json",
 	"build": {
-		"beforeBuildCommand": "npm run build",
+		"beforeBuildCommand": "echo npm run build",
 		"beforeDevCommand": "npm run dev",
 		"devPath": "http://localhost:8001",
 		"distDir": "../build"
@@ -11,9 +11,6 @@
 		"version": "0.1.0"
 	},
 	"tauri": {
-		"allowlist": {
-			"all": false
-		},
 		"bundle": {
 			"active": true,
 			"category": "DeveloperTool",
@@ -29,7 +26,7 @@
 				"icons/icon.icns",
 				"icons/icon.ico"
 			],
-			"identifier": "com.8baller.dev",
+			"identifier": "com.autonolas.dev",
 			"longDescription": "",
 			"macOS": {
 				"entitlements": null,
@@ -49,9 +46,6 @@
 		},
 		"security": {
 			"csp": null
-		},
-		"updater": {
-			"active": false
 		},
 		"windows": [
 			{

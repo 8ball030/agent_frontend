@@ -5,6 +5,11 @@
 	import io from 'socket.io-client';
 	import { _LogLine } from './+page';
 	// we need to set socket header to ignore cors
+	const host = window.location.hostname
+
+	console.log(host)
+
+
 	const socket = io('http://localhost:8080', {});
 
 	import { getToastStore } from '@skeletonlabs/skeleton';
