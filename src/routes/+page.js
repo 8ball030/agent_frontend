@@ -1,3 +1,4 @@
+
 const STATE_TRANSITION = "Entered in the '([^']+)";
 
 export const prerender = true;
@@ -7,18 +8,19 @@ export class _LogLine {
 	}
 
 	parseDate() {
-		// function to return the joined line with the time removed
 		const date = this.line.split(' ')[0];
-		var time = this.line.split(' ')[1];
-		// we remve the last 4 characters from the time
-		time = time.slice(0, -4);
-		const result = `${date} ${time}`;
-		// we check if the result is a valid date
-		const dateObj = new Date(result);
-		if (dateObj.toString() === 'Invalid Date') {
-			return 'Invalid Date';
-		}
-		return result;
+        const time = this.line.split(' ')[1];
+		var result = `${date} ${time}`;
+        result = result.slice(1, -1);
+        const microSeconds = result.split(',')[1];
+        result = result.split(',')[0];
+        result = new Date(result);
+        // we add the microseconds
+        result.setMilliseconds(microSeconds);
+        if (isNaN(result.getTime())) {
+            return false;
+        }
+        return result;
 	}
 
 	parseState() {
@@ -59,7 +61,7 @@ export class _LogLine {
 		this.parseLogLevel();
 		this.parseLogMsg();
 		// we check if the date is valid
-		if (date === 'Invalid Date') {
+		if (date === false) {
 			return false;
 		}
 		return true;

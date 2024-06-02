@@ -4,11 +4,12 @@
 	import { onMount } from 'svelte';
 	import io from 'socket.io-client';
 	import { _LogLine } from './+page';
-	// we need to set socket header to ignore cors
-	const socket = io('http://localhost:8080', {});
-
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
+    const AGENT_HOST = "http://0.0.0.0";
+    const AGENT_PORT = 5556;
+
+	const socket = io(AGENT_HOST + ':' + AGENT_PORT);
 	const toastStore = getToastStore();
 
 	// we want to call connect on the socket
@@ -44,9 +45,7 @@
 		// Optional: The data returned when interactive is enabled and a row is clicked.
 	};
 
-	$: log_test_data =
-		"2023-09-16 02:09:24,166 [INFO] aea.agent.packages.eightballer.skills.logging: [agent] Handling connect message in skill: Message(sender=eightballer/websocket_server:0.1.0,to=eightballer/logging:0.1.0,dialogue_reference=('f5ef488b0eb8f1b244183c73d7f91ef0d1c5b6e49ba0d0674a5aad76de997c0a', ''),message_id=1,performative=connect,target=0,url=/socket.io/)";
-	$: test_data = 'Ping!';
+	$: pingData = 'Ping!';
 
 	function clearLogs() {
 		logs = [];
@@ -87,9 +86,13 @@
 			if (result.parseAll() === false) {
 				return;
 			}
+            if (!result.parseDate()) {
+                return;
+            }
 			logs = [...logs, result];
 			renderAll();
 		} catch (e) {
+            console.log(e);
 			return;
 		}
 		renderAll();
@@ -245,6 +248,19 @@
 						>
 					</h4>
 				{/if}
+            <!-- If advanced is ticked, we display  the connection paramters -->
+                {#if advancedChecked == true}
+                    <h4 class="h5">
+                        Host: <button type="button" class="btn variant-ghost-secondary"
+                            >{AGENT_HOST}</button
+                        >
+                    </h4>
+                    <h4 class="h5">
+                        Port: <button type="button" class="btn variant-ghost-secondary"
+                            >{AGENT_PORT}</button
+                        >
+                    </h4>
+                {/if}
 			</div>
 
 			<div
@@ -335,12 +351,12 @@
 							type="text"
 							class="input input-primary input-bordered"
 							placeholder="Enter Message"
-							bind:value={test_data}
+							bind:value={pingData}
 						/>
 						<button
 							type="button"
 							class="btn btn-sm variant-filled-warning"
-							on:click={() => socket.emit('message', test_data)}>Send Test</button
+							on:click={() => socket.emit('message', pingData)}>Send Test</button
 						>
 					</div>
 				</div>
